@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl -d Ubuntu -- bash -c \"find:*)",
+      "Bash(wsl -d Ubuntu -- bash -c \"ls /usr/local/lib/node_modules/openclaw/\")",
+      "Bash(wsl -d Ubuntu -- bash -c \"cat /usr/local/lib/node_modules/openclaw/package.json\":*)",
+      "Bash(wsl -d Ubuntu -- bash -c \"cat /usr/local/lib/node_modules/openclaw/README.md | head -100\")",
+      "Bash(wsl:*)"
+    ]
+  }
+}

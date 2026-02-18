@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Configuration with secrets
+config/local.json
+config/production.json
+
+# Database
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# Course content (work in progress)
+course/content/**/*.mp4
+course/content/**/*.mov
+course/content/**/*.avi
+course/content/**/*.mkv
+course/content/**/*.psd
+course/content/**/*.ai
+course/content/**/*.sketch
+
+# Course drafts and personal notes
+course/**/*draft*.md
+course/**/*черновик*.md
+course/**/*WIP*.md

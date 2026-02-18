@@ -1,0 +1,48 @@
+{
+  "name": "openclaw",
+  "version": "1.0.0",
+  "description": "Система управления командой разработки образовательного курса с интеграцией Discord и Telegram",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "dev:discord": "ts-node src/bots/discord/index.ts",
+    "dev:telegram": "ts-node src/bots/telegram/index.ts",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest",
+    "db:init": "ts-node src/db/init.ts",
+    "db:migrate": "ts-node src/db/migrate.ts"
+  },
+  "keywords": [
+    "task-management",
+    "discord-bot",
+    "telegram-bot",
+    "team-management"
+  ],
+  "author": "OpenClaw Team",
+  "license": "MIT",
+  "dependencies": {
+    "@notionhq/client": "^5.9.0",
+    "airtable": "^0.12.2",
+    "better-sqlite3": "^9.4.3",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.1",
+    "node-telegram-bot-api": "^0.64.0",
+    "winston": "^3.11.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/node": "^20.11.16",
+    "@types/node-telegram-bot-api": "^0.64.3",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
