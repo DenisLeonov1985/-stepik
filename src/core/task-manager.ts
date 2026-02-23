@@ -11,7 +11,6 @@ import type {
   TaskFilter,
   User 
 } from '../types';
-import { syncTaskToAirtable } from '../integrations/airtable';
 
 /**
  * Менеджер задач - CRUD операции с задачами
@@ -40,13 +39,6 @@ export class TaskManager {
     logger.info(`Создана задача #${result.lastInsertRowid}: ${input.title}`);
     
     const task = this.getTaskById(result.lastInsertRowid as number)!;
-    
-    // Синхронизация с Airtable (асинхронно, не блокируем основной поток)
-    if (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) {
-      syncTaskToAirtable(task).catch(err => {
-        logger.error(`Failed to sync task to Airtable: ${err}`);
-      });
-    }
     
     return task;
   }
@@ -192,13 +184,6 @@ export class TaskManager {
     logger.info(`Обновлена задача #${id}`);
     
     const task = this.getTaskById(id);
-    
-    // Синхронизация с Airtable (асинхронно, не блокируем основной поток)
-    if (task && process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) {
-      syncTaskToAirtable(task).catch(err => {
-        logger.error(`Failed to sync task to Airtable: ${err}`);
-      });
-    }
     
     return task;
   }

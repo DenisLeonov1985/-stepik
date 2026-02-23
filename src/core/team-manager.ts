@@ -5,7 +5,6 @@
 import getDatabase from '../db';
 import { logger } from './logger';
 import type { User, CreateUserInput, UserRole } from '../types';
-import { syncUserToAirtable } from '../integrations/airtable';
 
 /**
  * Менеджер команды - управление пользователями
@@ -32,13 +31,6 @@ export class TeamManager {
     logger.info(`Создан пользователь #${result.lastInsertRowid}: ${input.username}`);
     
     const user = this.getUserById(result.lastInsertRowid as number)!;
-    
-    // Синхронизация с Airtable (асинхронно, не блокируем основной поток)
-    if (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) {
-      syncUserToAirtable(user).catch(err => {
-        logger.error(`Failed to sync user to Airtable: ${err}`);
-      });
-    }
     
     return user;
   }

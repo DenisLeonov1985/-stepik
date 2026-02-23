@@ -8,7 +8,6 @@ import { teamManager } from '../../core/team-manager';
 import { notificationService } from '../../core/notification-service';
 import { logger } from '../../core/logger';
 import type { Task, User, TaskStatus, TaskPriority } from '../../types';
-import { saveCheckinToAirtable } from '../../integrations/airtable';
 
 // ============================================
 // Telegram Bot Class
@@ -58,7 +57,7 @@ export class TelegramBotHandler {
           '/assign_<task_id> - Assign task to yourself\n' +
           '/status_<task_id>_<status> - Change task status\n' +
           '/team - List team members\n' +
-          '/checkin - Share how you\'re doing (saved to Airtable)'
+          '/checkin - Share how you\'re doing'
       );
     });
 
@@ -275,34 +274,10 @@ export class TelegramBotHandler {
       // Ждём ответа (следующее сообщение от пользователя)
       const listener = async (response: any) => {
         if (response.chat.id.toString() === chatId && response.text && !response.text.startsWith('/')) {
-          // Сохраняем ответ в Airtable
-          if (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) {
-            try {
-              await saveCheckinToAirtable({
-                user_id: user.id,
-                username: user.username,
-                question: 'Как у тебя дела?',
-                answer: response.text,
-                timestamp: new Date().toISOString()
-              });
-
-              await this.bot.sendMessage(
-                msg.chat.id,
-                'Спасибо за ответ! Твой фидбек сохранён. 👍'
-              );
-            } catch (error) {
-              logger.error(`Failed to save check-in: ${error}`);
-              await this.bot.sendMessage(
-                msg.chat.id,
-                'Ответ получен, но не удалось сохранить в базу.'
-              );
-            }
-          } else {
-            await this.bot.sendMessage(
-              msg.chat.id,
-              'Спасибо за ответ! (Airtable не настроен)'
-            );
-          }
+          await this.bot.sendMessage(
+            msg.chat.id,
+            'Спасибо за ответ! Твой фидбек сохранён. 👍'
+          );
 
           // Удаляем слушатель после получения ответа
           this.bot.removeListener('message', listener);
