@@ -7,13 +7,20 @@ import { User, Task } from '../types';
 import logger from '../core/logger';
 
 // Инициализация Airtable (опционально)
-let base: ReturnType<Airtable.Base> | null = null;
+let base: any = null;
+let isAirtableConfigured = false;
 
 if (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) {
-  const airtable = new Airtable({
-    apiKey: process.env.AIRTABLE_API_KEY
-  });
-  base = airtable.base(process.env.AIRTABLE_BASE_ID);
+  try {
+    const airtable = new Airtable({
+      apiKey: process.env.AIRTABLE_API_KEY
+    });
+    base = airtable.base(process.env.AIRTABLE_BASE_ID);
+    isAirtableConfigured = true;
+    logger.info('Airtable integration initialized');
+  } catch (error) {
+    logger.error(`Failed to initialize Airtable: ${error}`);
+  }
 } else {
   logger.warn('Airtable not configured. Set AIRTABLE_API_KEY and AIRTABLE_BASE_ID in .env');
 }
@@ -34,7 +41,7 @@ const TABLES = {
  * Сохранить пользователя в Airtable
  */
 export async function syncUserToAirtable(user: User): Promise<void> {
-  if (!base) {
+  if (!isAirtableConfigured || !base) {
     logger.debug('Airtable not configured, skipping user sync');
     return;
   }
@@ -76,7 +83,7 @@ export async function syncUserToAirtable(user: User): Promise<void> {
 export async function getUsersFromAirtable(): Promise<any[]> {
   try {
     const records = await base(TABLES.USERS).select().all();
-    return records.map(record => ({
+    return records.map((record: any) => ({
       id: record.id,
       ...record.fields
     }));
@@ -94,6 +101,10 @@ export async function getUsersFromAirtable(): Promise<any[]> {
  * Сохранить задачу в Airtable
  */
 export async function syncTaskToAirtable(task: Task): Promise<void> {
+  if (!isAirtableConfigured || !base) {
+    logger.debug('Airtable not configured, skipping task sync');
+    return;
+  }
   try {
     // Проверяем, существует ли задача
     const existingRecords = await base(TABLES.TASKS)
@@ -139,7 +150,7 @@ export async function syncTaskToAirtable(task: Task): Promise<void> {
 export async function getTasksFromAirtable(): Promise<any[]> {
   try {
     const records = await base(TABLES.TASKS).select().all();
-    return records.map(record => ({
+    return records.map((record: any) => ({
       id: record.id,
       ...record.fields
     }));
@@ -163,8 +174,12 @@ export async function syncNotificationToAirtable(notification: {
   type: string;
   sent_at: string;
 }): Promise<void> {
+  if (!isAirtableConfigured || !base) {
+    logger.debug('Airtable not configured, skipping notification sync');
+    return;
+  }
   try {
-    await base(TABLES.NOTIFICATIONS).create([
+    await (base as any)(TABLES.NOTIFICATIONS).create([
       {
         fields: {
           user_id: notification.user_id,
@@ -229,7 +244,7 @@ export async function syncAllTasksToAirtable(tasks: Task[]): Promise<void> {
  */
 export async function testAirtableConnection(): Promise<boolean> {
   try {
-    await base(TABLES.USERS).select({ maxRecords: 1 }).firstPage();
+    await (base as any)(TABLES.USERS).select({ maxRecords: 1 }).firstPage();
     logger.info('Airtable connection successful');
     return true;
   } catch (error) {
@@ -252,8 +267,12 @@ export async function saveCheckinToAirtable(checkin: {
   answer: string;
   timestamp: string;
 }): Promise<void> {
+  if (!isAirtableConfigured || !base) {
+    logger.debug('Airtable not configured, skipping check-in sync');
+    return;
+  }
   try {
-    await base(TABLES.CHECKINS).create([
+    await (base as any)(TABLES.CHECKINS).create([
       {
         fields: {
           user_id: checkin.user_id,
