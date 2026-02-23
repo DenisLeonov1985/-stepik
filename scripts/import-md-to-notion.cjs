@@ -3,6 +3,8 @@
 // Импорт Markdown в Notion (CommonJS)
 // ============================================
 
+require('dotenv').config();
+
 const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
